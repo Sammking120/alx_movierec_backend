@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 import os
 from pathlib import Path
+import dj_database_url
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -27,9 +29,9 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'djangoDEV-secret-key')
 TMDB_API_KEY = os.getenv("TMDB_API_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ['.onrender.com', 'localhost']
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split(",")
 
 # Static files settings
 STATIC_URL = '/static/'
@@ -55,6 +57,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -100,7 +103,11 @@ DATABASES = {
         'PORT': config('DB_PORT'),
     }
 }
-
+DATABASES = {
+    "default": dj_database_url.parse(
+        os.environ.get("DATABASE_URL", f"postgres://{os.environ.get('DB_USER','movieuser')}:{os.environ.get('DB_PASSWORD','moviepass')}@{os.environ.get('DB_HOST','db')}:{os.environ.get('DB_PORT',5432)}/{os.environ.get('DB_NAME','moviedb')}")
+    )
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -144,10 +151,10 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 CACHES = {

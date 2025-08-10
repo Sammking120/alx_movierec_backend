@@ -1,1 +1,1 @@
-web: gunicorn alx_movierec_backend.wsgi
+web: gunicorn alx_movierec_backend.wsgi.application
