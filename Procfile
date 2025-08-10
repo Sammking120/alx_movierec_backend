@@ -1,0 +1,1 @@
+web: gunicorn alx_movierec_backend.wsgi
