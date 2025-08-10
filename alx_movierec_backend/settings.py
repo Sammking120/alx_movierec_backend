@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,7 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-yjpzcgc@on8bhkor279tjhe)1+qv0d+#@w(2-ouaw*5l9d0b_k'
+SECRET_KEY = os.getenv('SECRET_KEY', 'djangoDEV-secret-key')
+
+# TMDB API Key
+TMDB_API_KEY = os.getenv("TMDB_API_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -38,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'drf_spectacular',
     'moviex_shop',
 ]
 
@@ -132,5 +137,39 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    )
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": config('REDIS_URL', default='redis://127.0.0.1:6379/1'),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            # Optional: set a prefix to avoid key collisions:
+            # "KEY_PREFIX": "movierec"
+        }
+    }
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Movie Recommendation Backend API',
+    'DESCRIPTION': 'APIs for trending movies, recommendations, user auth and favorites',
+    'VERSION': '1.0.0',
+    'SERVERS': [
+        {'url': 'http://localhost:8000', 'description': 'Local development'},
+        # add production server URL when deployed
+    ],
+    'COMPONENTS': {
+        'securitySchemes': {
+            'bearerAuth': {
+                'type': 'http',
+                'scheme': 'bearer',
+                'bearerFormat': 'JWT',
+            }
+        }
+    },
+    # set docs to require bearer token globally (optional)
+    'SECURITY': [{'bearerAuth': []}],
 }

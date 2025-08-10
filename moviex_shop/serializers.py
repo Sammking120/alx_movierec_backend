@@ -23,3 +23,12 @@ class FavoriteMovieSerializer(serializers.ModelSerializer):
     class Meta: # type: ignore
         model = FavoriteMovie
         fields = ['id', 'movie_id', 'title', 'poster_path']
+        
+class MovieSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    title = serializers.CharField()
+    overview = serializers.CharField()
+    poster_path = serializers.CharField(allow_null=True)
+    release_date = serializers.CharField()
+    vote_average = serializers.FloatField()
+    

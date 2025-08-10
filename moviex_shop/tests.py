@@ -2,7 +2,18 @@ from django.test import TestCase
 
 # Create your tests here.
 from django.contrib.auth.models import User
-from rest_framework.test import APIClient
+from rest_framework.test import APIClient, APITestCase
+
+class MovieEndpointsTest(APITestCase):
+    def test_trending_movies_success(self):
+        response = self.client.get(reverse('trending-movies'))
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response.data, list)
+
+    def test_recommended_movies(self):
+        movie_id = 550  # Example: Fight Club
+        response = self.client.get(f"/api/movies/recommended/{movie_id}/")
+        self.assertEqual(response.status_code, 200)
 
 class FavoriteMovieTests(TestCase):
     def setUp(self):
