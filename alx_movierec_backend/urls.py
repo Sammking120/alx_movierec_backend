@@ -25,7 +25,7 @@ def home(request):
 
 
 urlpatterns = [
-    path('', home, name='home'),
+    path('', home),
     path('admin/', admin.site.urls),
     path('api/movies/', include('moviex_shop.urls')),
     # JWT authentication endpoints

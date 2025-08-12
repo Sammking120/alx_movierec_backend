@@ -2,10 +2,11 @@ from django.urls import path
 from .import views
 from .views import trending_movies, recommended_movies
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from .views import register_user, list_favorites, add_favorite, remove_favorite
+from .views import register_user, list_favorites, add_favorite, remove_favorite,create_movie, register
 
 urlpatterns = [
     path('trending/', views.trending_movies, name='trending-movies'),
+    path('', create_movie, name='create-movie'), 
     path('register/', views.register, name='register'),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

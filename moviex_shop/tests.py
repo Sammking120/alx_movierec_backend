@@ -3,6 +3,7 @@ from django.test import TestCase
 # Create your tests here.
 from django.contrib.auth.models import User
 from rest_framework.test import APIClient, APITestCase
+from django.urls import reverse
 
 class MovieEndpointsTest(APITestCase):
     def test_trending_movies_success(self):

@@ -9,14 +9,9 @@ from .tmdb import get_trending_movies, get_recommended_movies
 from .serializers import RegisterSerializer, FavoriteMovieSerializer, MovieSerializer
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .models import FavoriteMovie
+from .models import FavoriteMovie, Movie
 from rest_framework.pagination import PageNumberPagination
-from drf_spectacular.utils import extend_schema, OpenApiResponse
-
-@extend_schema(
-    description="Get trending movies from TMDb (cached).",
-    responses=MovieSerializer(many=True)
-)
+from drf_spectacular.utils import OpenApiResponse
 
 class ManualPagination(PageNumberPagination):
     page_size = 10
@@ -79,6 +74,23 @@ def add_favorite(request):
         serializer.save(user=request.user)
         return Response(serializer.data, status=201)
     return Response(serializer.errors, status=400)
+
+@api_view(['GET', 'POST'])
+def create_movie(request):
+    if request.method == 'GET':
+        # List all movies
+        movies = Movie.objects.all()
+        serializer = MovieSerializer(movies, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    elif request.method == 'POST':
+        # Validate and create a new movie
+        serializer = MovieSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response({"error": "Method not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+# ...existing code..
 
 @api_view(['DELETE'])
 @permission_classes([IsAuthenticated])

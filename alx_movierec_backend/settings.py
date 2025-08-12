@@ -31,7 +31,7 @@ TMDB_API_KEY = os.getenv("TMDB_API_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "localhost").split(",")
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 # Static files settings
 STATIC_URL = '/static/'
@@ -103,11 +103,11 @@ DATABASES = {
         'PORT': config('DB_PORT'),
     }
 }
-DATABASES = {
-    "default": dj_database_url.parse(
-        os.environ.get("DATABASE_URL", f"postgres://{os.environ.get('DB_USER','movieuser')}:{os.environ.get('DB_PASSWORD','moviepass')}@{os.environ.get('DB_HOST','db')}:{os.environ.get('DB_PORT',5432)}/{os.environ.get('DB_NAME','moviedb')}")
-    )
-}
+# DATABASES = {
+#     "default": dj_database_url.parse(
+#         os.environ.get("DATABASE_URL", f"postgres://{os.environ.get('DB_USER','movieuser')}:{os.environ.get('DB_PASSWORD','moviepass')}@{os.environ.get('DB_HOST','db')}:{os.environ.get('DB_PORT',5432)}/{os.environ.get('DB_NAME','moviedb')}")
+#     )
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

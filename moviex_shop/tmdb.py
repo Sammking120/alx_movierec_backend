@@ -15,11 +15,15 @@ RECOMM_TTL = int(config('TMDB_RECOMM_TTL', default=1800))
 
 def _fetch_from_tmdb(path, params=None, timeout=6):
     url = f"{TMDB_BASE_URL}{path}"
+    headers = {
+        "Authorization": f"Bearer {TMDB_API_KEY}",
+        "accept": "application/json"
+    }
     params = params or {}
-    params['api_key'] = TMDB_API_KEY
     try:
-        resp = requests.get(url, params=params, timeout=timeout)
+        resp = requests.get(url, headers=headers, params=params, timeout=timeout)
         resp.raise_for_status()
+        print("TMDB response:", resp.json())
         return resp.json().get('results', [])
     except requests.RequestException as exc:
         logger.exception("TMDb request failed: %s %s", url, exc)
@@ -31,6 +35,7 @@ def get_trending_movies():
     if cached is not None:
         logger.info("get_trending_movies: cache hit")
         return cached
+    
 
     logger.info("get_trending_movies: cache miss -> fetching TMDb")
     results = _fetch_from_tmdb("/trending/movie/week")
