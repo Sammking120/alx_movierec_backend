@@ -47,7 +47,7 @@ httpcore==1.0.9
 httpx==0.28.1
 idna==3.10
 inflection==0.5.1
-ipgeolocation==0.1
+ipgeolocation==1.6.0
 jmespath==1.0.1
 jsonschema==4.25.0
 jsonschema-specifications==2025.4.1
